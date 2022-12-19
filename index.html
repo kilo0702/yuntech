@@ -70,19 +70,20 @@
 							<article id="8f">
 								<h2 class="major">緊急按鈕即時狀態</h2>
 								<span class="image main"><img src="images/map.png" loading="lazy" alt="Loading..."/></span>
-								<p><font color="#10B4FB">#10B4FB</font>
-									<br><font color="#39FF81">#39FF81</font>
-									<br><font color="#FBBE0C">#FBBE0C</font>
-                                </p>
+								<h3>燈桿一&nbsp;緊急按鈕狀態:&nbsp;<a id="pole01"></a></h3>
+								<h3>燈桿二&nbsp;緊急按鈕狀態:&nbsp;<a id="pole02"></a></h3>
+								<h3>燈桿三&nbsp;緊急按鈕狀態:&nbsp;<a id="pole03"></a></h3>
+                                
 							</article>
 						
 						<!-- 7f -->
 							<article id="7f">
 								<h2 class="major">各燈桿當前狀態</h2>
 								<span class="image main"><img src="images/map.png" loading="lazy" alt="Loading..."/></span>
-								<p><font color="#10B4FB">#10B4FB</font>
-								<br><font color="#39FF81">#39FF81</font>
-								<br><font color="#FBBE0C">#FBBE0C</font>
+								<h3>燈桿一&nbsp;運行狀態:&nbsp;<a id="p01status"></a></h3>
+								<h3>燈桿二&nbsp;運行狀態:&nbsp;<a id="p02status"></a></h3>
+								<h3>燈桿三&nbsp;運行狀態:&nbsp;<a id="p03status"></a></h3>
+								
                                 </p>
 							</article>
 				
@@ -108,9 +109,10 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-			<script type="module">  // Import the functions you need from the SDKs you need
-				import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
-				import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-analytics.js";
+
+			<script type="module">//到firebase專案設定->一般設定下面->按</>產生網頁後 ->選CDN->複製全部->貼到此處
+				import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+				import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
 				const firebaseConfig = {
 					apiKey: "AIzaSyCIe1kGONx3raDI0UtALHFpYt8yAytbn_k",
 					authDomain: "lightpole-35edc.firebaseapp.com",
@@ -120,10 +122,45 @@
 					messagingSenderId: "842483124488",
 					appId: "1:842483124488:web:99d014fc7e51202d2744bd",
 					measurementId: "G-94081EG8NB"
-					}; // Initialize Firebase
+					};
+				// Initialize Firebase
 				const app = initializeApp(firebaseConfig);
-				var database = firebase.database();
 				const analytics = getAnalytics(app);
+				
+				import {getDatabase, ref, get, set, child, update, remove, onValue}
+				from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"//Copy and Paste the URL from near the top of the CDN you pasted in from firebase
+				// (the one where you imported "initializeApp" from),
+				//but change "firebase-app" to "firebase-database"
+				       
+				const db = getDatabase();
+				var findBtn = document.querySelector("#find");
+				
+				time=setInterval(function(){
+					const dbref = ref(db);
+					get(child(dbref, "alarm/"))
+					.then((snapshot)=>{
+						if(snapshot.exists()){
+							pole01.innerHTML = "" + snapshot.val().p1;
+							pole02.innerHTML = "" + snapshot.val().p2;
+							pole03.innerHTML = "" + snapshot.val().p3;
+							} else {
+								alert("更新失敗");
+								}
+						})
+					get(child(dbref, "error/"))
+					.then((snapshot)=>{
+						if(snapshot.exists()){
+							p01status.innerHTML = "" + snapshot.val().p1;
+							p02status.innerHTML = "" + snapshot.val().p2;
+							p03status.innerHTML = "" + snapshot.val().p3;
+							} else {
+								alert("更新失敗");
+								}
+						})
+					.catch((error)=>{
+						alert(error)
+						})
+					},2000);
 			</script>
 	</body>
 </html>
